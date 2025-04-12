@@ -25,7 +25,7 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<NotificationResponse> createNotification(@RequestBody NotificationRequest notificationRequest) {
+    public ResponseEntity<NotificationResponse> processNotification(@RequestBody NotificationRequest notificationRequest) {
 
         Notification notification = notificationService.create(notificationRequest);
         NotificationResponse response = Mapper.mapNotificationToNotificationResponse(notification);
@@ -36,7 +36,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NotificationResponse>> getNotifications(@RequestParam("userId") UUID userId) {
+    public ResponseEntity<List<NotificationResponse>> getUserNotifications(@RequestParam("userId") UUID userId) {
 
         List<NotificationResponse> notifications = notificationService.getNotifications(userId)
                 .stream()
@@ -49,7 +49,7 @@ public class NotificationController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> archiveNotifications(@RequestParam("userId") UUID userId) {
+    public ResponseEntity<Void> archiveUserNotifications(@RequestParam("userId") UUID userId) {
 
         notificationService.clearNotifications(userId);
 

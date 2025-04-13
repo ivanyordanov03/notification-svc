@@ -4,7 +4,7 @@ import app.model.Notification;
 import app.service.NotificationService;
 import app.web.dto.NotificationRequest;
 import app.web.dto.NotificationResponse;
-import app.web.dto.mapper.Mapper;
+import app.web.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +48,19 @@ public class NotificationController {
                 .body(notifications);
     }
 
-    @PutMapping
+    @DeleteMapping
     public ResponseEntity<Void> archiveUserNotifications(@RequestParam("userId") UUID userId) {
 
         notificationService.clearNotifications(userId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(null);
+    }
+    @PutMapping
+    ResponseEntity<Void> markAllAsRead(@RequestParam(name = "userId") UUID userId) {
+
+        notificationService.markAllAsRead(userId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

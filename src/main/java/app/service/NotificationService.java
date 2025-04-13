@@ -25,7 +25,7 @@ public class NotificationService {
         this.mailSender = mailSender;
     }
 
-    public Notification create (NotificationRequest notificationRequest) {
+    public Notification create(NotificationRequest notificationRequest) {
 
         Notification notification;
 
@@ -33,7 +33,7 @@ public class NotificationService {
             notification = sendEmail(notificationRequest);
         } else {
             notification = Notification.builder()
-                    .title(notificationRequest.getTitle())
+                    .topic(notificationRequest.getTopic())
                     .body(notificationRequest.getBody())
                     .userId(notificationRequest.getUserId())
                     .dateCreated(LocalDateTime.now())
@@ -48,21 +48,19 @@ public class NotificationService {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(notificationRequest.getEmail());
-        message.setSubject(notificationRequest.getTitle());
+        message.setSubject(notificationRequest.getTopic());
         message.setText(notificationRequest.getBody());
 
         String status;
-        String errorMessage = "";
         try {
             mailSender.send(message);
             status = "was sent successfully";
         } catch (Exception e) {
-            status = "failed";
-            errorMessage =  " due to "  + e.getMessage();
+            status = "failed due to "  + e.getMessage();
         }
         Notification notification = Notification.builder()
-                .title("Email notification %s".formatted(status))
-                .body("Email notification to email %s %s%s".formatted(notificationRequest.getEmail(), status, errorMessage))
+                .topic("Email notification %s".formatted(status))
+                .body("Email notification to email %s %s".formatted(notificationRequest.getEmail(), status))
                 .userId(notificationRequest.getUserId())
                 .dateCreated(LocalDateTime.now())
                 .build();
@@ -83,6 +81,15 @@ public class NotificationService {
                 .forEach(notification -> {
                     notification.setArchived(true);
                     notificationRepository.save(notification);
+                });
+    }
+
+    public void markAllAsRead(UUID userId) {
+
+        getNotifications(userId)
+                .forEach(n -> {
+                    n.setUnread(false);
+                    notificationRepository.save(n);
                 });
     }
 }

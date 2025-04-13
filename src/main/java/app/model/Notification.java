@@ -18,7 +18,7 @@ public class Notification {
     private UUID id;
 
     @Column(nullable = false)
-    private String title;
+    private String topic;
 
     @Column(nullable = false)
     private String body;
